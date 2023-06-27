@@ -6,13 +6,12 @@ export const arrangeDate = () => {
   return aWeekFromNow;
 };
 
-export const checkIfNumberIsPositive = (value: number) => {
-  if (value < 0) {
-    throw new Error('Value must be greater than 0');
+export const isWholeNumberOrZero =(num:number) => {
+  if (Number.isInteger(num) || typeof num === 'number') {
+    return Number.isInteger(num) || num === 0;
   }
-
-  return true ;
-};
+  return false;
+}
 
 
 // export a function that takes a date as input and returns a formatted date string as dd-mm-yyyy

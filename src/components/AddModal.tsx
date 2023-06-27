@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { Item, ItemToCreate, ItemType } from '../utils/types/types';
 import { useState } from 'react';
-import { arrangeDate } from '../utils/helpers/function';
+import { arrangeDate, isWholeNumberOrZero } from '../utils/helpers/function';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import { api } from '../api.index';
@@ -36,18 +36,30 @@ const AddModal = ({ setItems, setAddingMode }: Props) => {
     name: '',
     itemDescription: '',
     itemType: 'fruit',
-    date: arrangeDate() ,
+    date: arrangeDate(),
     catalogNumber: 0,
   });
 
   const handleChange = (
     key: keyof ItemToCreate,
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> 
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    if (key === 'catalogNumber') {
+      if (!isWholeNumberOrZero(+e.target.value)) {
+        alert('catalog number must be a whole number');
+        return;
+      }
+    }
+
+    if (key === 'name') {
+      if (e.target.value.length > 50) {
+        alert('name must be less than 50 characters');
+        return;
+      }
+    }
+
     setNewItem({ ...newItem, [key]: e.target.value });
   };
-
- 
 
   const handleSelectChange = (e: SelectChangeEvent) => {
     setNewItem({ ...newItem, itemType: e.target.value as ItemType });
@@ -73,12 +85,14 @@ const AddModal = ({ setItems, setAddingMode }: Props) => {
           label="name"
           onChange={e => handleChange('name', e)}
           placeholder="limited to 50 characters"
+          required
         />
         <TextField
-          defaultValue={''}
+          defaultValue={0}
           type="number"
           label="catalog number"
           onChange={e => handleChange('catalogNumber', e)}
+          required
         />
 
         <TextField
@@ -98,9 +112,8 @@ const AddModal = ({ setItems, setAddingMode }: Props) => {
         </Select>
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          
-          <DatePicker 
-          onChange={(val) => setNewItem({...newItem, date: val as Date})}
+          <DatePicker
+            onChange={val => setNewItem({ ...newItem, date: val as Date })}
           />
         </LocalizationProvider>
         <Button onClick={handleAddItem}>Add Item</Button>

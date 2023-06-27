@@ -48,7 +48,7 @@ const EditModal = ({ item, setSelectedItem, setItems }: Props) => {
   };
   const handleSubmit = async () => {
     try {
-      await api.items.editItem(editItem);
+      await api.items.editItem(editItem._id, editItem);
       const items = await api.items.getAllItems();
       setItems(items);
     } catch (error) {
